@@ -4,7 +4,9 @@ class ButtonComponent extends StatelessWidget {
   final void Function() onclick;
   final Color color;
   final String text;
-  ButtonComponent({required this.text, required this.onclick, required this.color});
+
+  ButtonComponent(
+      {required this.text, required this.onclick, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,10 @@ class ButtonComponent extends StatelessWidget {
           onPressed: onclick,
           minWidth: 200.0,
           height: 42.0,
-          child: Text(text),
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
