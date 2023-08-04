@@ -1,5 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/components/button_component.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +17,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation animation;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
+    if (isLoggedIn()) {
+      Navigator.pushNamed(context, ChatScreen.id);
+      return;
+    }
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     animation = ColorTween(begin: Colors.lightBlueAccent, end: Colors.white)
@@ -28,6 +35,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         // do nothing, just set the new value of controller.value
       });
     });
+  }
+
+  bool isLoggedIn() {
+    try {
+      return _auth.currentUser != null;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   @override
