@@ -1,10 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flash_chat/repository/auth_repository.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
+
+AuthRepository authRepository = AuthRepository();
 
 void main() async {
   // wait run the app until the firebase is initialize
@@ -14,11 +16,9 @@ void main() async {
 }
 
 class FlashChat extends StatelessWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String getInitialRoute() {
     try {
-      if(_auth.currentUser != null) {
+      if (authRepository.isLoggedIn()) {
         return ChatScreen.id;
       } else {
         return WelcomeScreen.id;
