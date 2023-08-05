@@ -13,4 +13,12 @@ class ChatRepository {
       print(e);
     }
   }
+
+  void streamMessages() async {
+    await for(var snapshot in _firebaseFirestore.collection(_collection).snapshots()) {
+      for(var document in snapshot.docs) {
+        print(document);
+      }
+    }
+  }
 }
