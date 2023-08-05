@@ -10,20 +10,20 @@ class ChatRepository {
     try {
       await _firebaseFirestore
           .collection(_collection)
-          .add({'sender': sender, 'message': message});
+          .add({'sender': sender, 'message': message, 'date': Timestamp.now()});
     } catch (e) {
       print(e);
     }
   }
 
   Stream<List<Message>> streamMessages() {
-    return _firebaseFirestore.collection(_collection).snapshots().map((event) {
+    return _firebaseFirestore.collection(_collection).orderBy('date').snapshots().map((event) {
       List<Message> messages = [];
       event.docs.reversed.forEach((element) {
         Message message = Message(element['sender'], element['message']);
         messages.add(message);
       });
-      
+
       return messages;
     });
   }
