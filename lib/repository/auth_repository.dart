@@ -12,6 +12,15 @@ class AuthRepository {
     }
   }
 
+  String currentUserEmailLoggedIn() {
+    try {
+      return _firebaseAuth.currentUser?.email ?? "";
+    } catch (e) {
+      print(e);
+      return "";
+    }
+  }
+
   Future<void> register({
     required String email,
     required String password,
