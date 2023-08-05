@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../model/Message.dart';
+
 class ChatRepository {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   static const String _collection = 'messages';
@@ -14,11 +16,15 @@ class ChatRepository {
     }
   }
 
-  void streamMessages() async {
-    await for(var snapshot in _firebaseFirestore.collection(_collection).snapshots()) {
-      for(var document in snapshot.docs) {
-        print(document);
-      }
-    }
+  Stream<List<Message>> streamMessages() {
+    return _firebaseFirestore.collection(_collection).snapshots().map((event) {
+      List<Message> messages = [];
+      event.docs.forEach((element) { 
+        Message message = Message(element['sender'], element['message']);
+        messages.add(message);
+      });
+      
+      return messages;
+    });
   }
 }

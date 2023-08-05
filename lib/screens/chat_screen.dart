@@ -5,6 +5,8 @@ import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../model/Message.dart';
+
 class ChatScreen extends StatefulWidget {
   static const String id = 'chat_screen';
 
@@ -62,6 +64,28 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<List<Message>>(
+              stream: repository.streamMessages(),
+              initialData: [],
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data?.isEmpty == true) {
+                  return Center(
+                    child: Text(
+                      "No data",
+                    ),
+                  );
+                }
+
+                List<Text> widgetsText = [];
+                List<Message> data = snapshot.data ?? [];
+                for (Message item in data) {
+                  widgetsText.add(Text("${item.sender} : ${item.text}"));
+                }
+                return Column(
+                  children: widgetsText,
+                );
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
