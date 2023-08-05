@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_alt/modal_progress_hud_alt.dart';
 
 import '../components/button_component.dart';
 import '../constants.dart';
+import '../repository/auth_repository.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -16,8 +16,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String email = "";
   String password = "";
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
+  AuthRepository authRepository = AuthRepository();
 
   void setLoading(bool isLoading) {
     setState(() {
@@ -78,8 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   setLoading(true);
 
                   try {
-                    await _auth.signInWithEmailAndPassword(
-                        email: email, password: password);
+                    await authRepository.login(
+                      email: email,
+                      password: password,
+                    );
                     setLoading(false);
                     Navigator.pushNamed(context, ChatScreen.id);
                   } catch (e) {
