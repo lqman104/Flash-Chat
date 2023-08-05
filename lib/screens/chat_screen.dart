@@ -130,14 +130,18 @@ class MessageStream extends StatelessWidget {
         List<Message> data = snapshot.data ?? [];
         for (Message item in data) {
           bool isMe = authRepository.currentUserEmailLoggedIn() == item.sender;
-          widgetsText.add(MessageBubble(
-            sender: item.sender,
-            text: item.text,
-            isMe: isMe,
-          ));
+          widgetsText.add(
+            MessageBubble(
+              sender: item.sender,
+              text: item.text,
+              isMe: isMe,
+            ),
+          );
         }
         return Expanded(
           child: ListView(
+            reverse: true,
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             children: widgetsText,
           ),
         );
@@ -172,7 +176,7 @@ class MessageBubble extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+      padding: EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,

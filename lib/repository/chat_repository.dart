@@ -19,7 +19,7 @@ class ChatRepository {
   Stream<List<Message>> streamMessages() {
     return _firebaseFirestore.collection(_collection).snapshots().map((event) {
       List<Message> messages = [];
-      event.docs.forEach((element) { 
+      event.docs.reversed.forEach((element) {
         Message message = Message(element['sender'], element['message']);
         messages.add(message);
       });
