@@ -11,4 +11,14 @@ class AuthRepository {
       return false;
     }
   }
+
+  Future<void> register({
+    required String email,
+    required String password,
+  }) async {
+    await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
 }

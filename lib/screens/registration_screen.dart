@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_alt/modal_progress_hud_alt.dart';
 
 import '../components/button_component.dart';
+import '../repository/auth_repository.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -14,9 +14,9 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  AuthRepository authRepository = AuthRepository();
   String email = "";
   String password = "";
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
 
   void setLoading(bool isLoading) {
@@ -77,7 +77,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onclick: () async {
                   setLoading(true);
                   try {
-                    await _auth.createUserWithEmailAndPassword(
+                    await authRepository.register(
                       email: email,
                       password: password,
                     );
