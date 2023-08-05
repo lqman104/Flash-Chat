@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/repository/chat_repository.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController _editingController = TextEditingController();
+  final ChatRepository repository = ChatRepository();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -35,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String message = "";
     return Scaffold(
       appBar: AppBar(
         leading: null,
@@ -43,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: Icon(Icons.close),
               onPressed: () async {
                 await _auth.signOut();
-                if(Navigator.canPop(context)) {
+                if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                 } else {
                   Navigator.pushReplacementNamed(context, LoginScreen.id);
@@ -65,15 +69,24 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: _editingController,
                       onChanged: (value) {
-                        //Do something with the user input.
+                        message = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      if (message.isNotEmpty) {
+                        repository.sendMessage(
+                            _auth.currentUser?.email ?? "", message);
+                        _editingController.clear();
+
+                        setState(() {
+                          message = "";
+                        });
+                      }
                     },
                     child: Text(
                       'Send',
