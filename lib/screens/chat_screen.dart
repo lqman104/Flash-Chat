@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 import '../model/Message.dart';
 
+final ChatRepository repository = ChatRepository();
+
 class ChatScreen extends StatefulWidget {
   static const String id = 'chat_screen';
 
@@ -16,7 +18,6 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController _editingController = TextEditingController();
-  final ChatRepository repository = ChatRepository();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -64,28 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            StreamBuilder<List<Message>>(
-              stream: repository.streamMessages(),
-              initialData: [],
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data?.isEmpty == true) {
-                  return Center(
-                    child: Text(
-                      "No data",
-                    ),
-                  );
-                }
-
-                List<Text> widgetsText = [];
-                List<Message> data = snapshot.data ?? [];
-                for (Message item in data) {
-                  widgetsText.add(Text("${item.sender} : ${item.text}"));
-                }
-                return Column(
-                  children: widgetsText,
-                );
-              },
-            ),
+            MessageStream(),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -122,6 +102,78 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MessageStream extends StatelessWidget {
+  const MessageStream({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Message>>(
+      stream: repository.streamMessages(),
+      initialData: [],
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data?.isEmpty == true) {
+          return Center(
+            child: Text(
+              "No data",
+            ),
+          );
+        }
+
+        List<MessageBubble> widgetsText = [];
+        List<Message> data = snapshot.data ?? [];
+        for (Message item in data) {
+          widgetsText
+              .add(MessageBubble(sender: item.sender, text: item.text));
+        }
+        return Expanded(
+          child: ListView(
+            children: widgetsText,
+          ),
+        );
+      },
+    );
+  }
+}
+
+
+class MessageBubble extends StatelessWidget {
+  final String sender;
+  final String text;
+
+  MessageBubble({required this.sender, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 4.0),
+            child: Text(
+              sender,
+              style: TextStyle(color: Colors.black54),
+            ),
+          ),
+          Material(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.white, fontSize: 15.0),
+              ),
+            ),
+            color: Colors.lightBlueAccent,
+            borderRadius: BorderRadius.circular(30),
+            elevation: 5,
+          )
+        ],
       ),
     );
   }
